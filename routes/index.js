@@ -191,7 +191,7 @@ router.get('/awards/:id', (req, res, next) => {
 router.get('/user/:id', (req, res, next) => {
   if(typeof req.params.id != 'undefined') {
     knex('users')
-    .select('first_name', 'last_name')
+    .select('first_name', 'last_name', 'image_url')
     .where('id', req.params.id)
     .first()
     .then(user => {

@@ -66,6 +66,28 @@ router.get('/batch', (req, res) => {
   })
 });
 
+router.get('/batch/:batch_id', (req, res, next) => {
+  if (req.params.batch_id) {
+    Promise.all([
+      Batches().where('id', req.params.batch_id).first(),
+      knex('employee_batches')
+      .where('batch_id', req.params.batch_id)
+      .join('employees', 'employees.id', 'employee_id').join('title', 'title.id', 'title_id'),
+      knex('user_batches').select('user_batches.user_id', 'user_batches.batch_id', 'users.first_name', 'users.last_name', 'users.id')
+      .where('batch_id', req.params.batch_id)
+      .join('users', 'users.id', 'user_id')
+    ]).then(function(result) {
+      res.json({
+        batch: result[0],
+        employees: result[1],
+        users: result[2]
+      });
+    })
+  } else {
+    res.json({error: 'Invalid batch id'})
+  }
+});
+
 router.get('/batches/:user_id', (req, res, next) => {
   if (req.params.user_id) {
     knex('user_batches')

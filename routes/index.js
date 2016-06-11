@@ -188,6 +188,20 @@ router.get('/awards/:id', (req, res, next) => {
   })
 })
 
+router.get('/user/:id', (req, res, next) => {
+  if(typeof req.params.id != 'undefined') {
+    knex('users')
+    .select('first_name', 'last_name')
+    .where('id', req.params.id)
+    .first()
+    .then(user => {
+      res.json(user);
+    });
+  } else {
+    res.json({error: 'Error? Yes. An error.'});
+  }
+});
+
 router.get('/beer/:id', (req, res, next) => {
   let id = req.params.id;
   if(beersByID.hasOwnProperty(id)) {

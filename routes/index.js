@@ -87,6 +87,14 @@ router.get('/beer/:id', (req, res, next) => {
     })
 });
 
+router.get('/beers', (req, res, next) => {
+  let url = 'http://apis.mondorobot.com/beers/'
+  unirest.get(url)
+    .end(response => {
+      res.json(response.body.beers);
+    })
+});
+
 function getAwards (id) {
   return knex('user_awards').where('user_id', id).join('awards', 'awards.id', 'award_id')
 }

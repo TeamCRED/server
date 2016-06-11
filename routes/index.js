@@ -22,15 +22,9 @@ router.get('/beer', (req, res) => {
   if (!beer_id) {
     res.json({error: "make sure to include beer_id"})
   }
-  Batches().select()
-    .where('beer_id', beer_id)
-    // .orWhere('date', date)
-    // .orWhere('time', time)
-    .orWhere('tank', tank)
-    .orWhere('quote', quote)
-    .then(beer => {
+  Batches().select().where('beer_id', beer_id).then(beer => {
     res.json({
-      query: `fetching data for ${beer_id}`,
+      beer_id: beer_id,
       result: beer,
     })
   })

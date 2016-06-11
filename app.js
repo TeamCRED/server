@@ -11,6 +11,7 @@ const cors = require('cors');
 
 const routes = require('./routes/index');
 const auth = require('./routes/auth');
+const batch = require('./routes/batch');
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use(auth.authenticate);
 
 app.use('/', routes);
 app.use('/auth', auth.router);
+app.use('/batch', batch);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

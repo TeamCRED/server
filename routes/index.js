@@ -33,7 +33,7 @@ router.get('/beer', (req, res) => {
   if (tank) query.andWhere('tank', tank);
 
   query.then(batches => {
-    if (batches.length > 1) {
+    if (batches.length > 1 || batches.length == 0) {
       return res.json({
         error: "Not enough information to find your brew. :("
       })
@@ -50,6 +50,7 @@ router.get('/beer', (req, res) => {
       ]).then(function(result) {
 
         res.json({
+          batch: batch,
           employees: result[0],
           users: result[1]
         });

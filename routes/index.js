@@ -49,7 +49,7 @@ router.post('/user_batch', (req, res, next) => {
                 batch_id: batch.id
               }, 'id').then(function (id) {
                 console.log(id);
-                res.json({id: id[0]})
+                res.json({id: id[0], batch: batch})
               })
             }
           })
@@ -109,7 +109,23 @@ router.get('/employees/:user_id', (req, res, next) => {
     .join('employees', 'employees.id', 'employee_batches.employee_id')
     .join('title', 'title.id', 'employees.title_id')
     .then(function (employees) {
-      res.json(employees);
+      var employeeCounts = {};
+      var uniqueEmployees = [];
+
+      employees.forEach(u => {
+        if (employeeCounts[u.employee_id]) {
+          employeeCounts[u.employee_id]++;
+        } else {
+          employeeCounts[u.employee_id] = 1;
+          uniqueEmployees.push(u);
+        }
+      });
+
+      uniqueEmployees.forEach(u => {
+        u.count = employeeCounts[u.employee_id];
+      });
+
+      res.json(uniqueEmployees);
     })
   } else {
     res.json({error: 'Invalid user id'})

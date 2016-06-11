@@ -112,7 +112,23 @@ router.get('/buddies/:user_id', (req, res, next) => {
       .join('users', 'users.id', 'user_id')
       .select('users.first_name', 'users.last_name', 'users.id')
       .then(users => {
-        res.json(users);
+        var userCounts = {};
+        var uniqueUsers = [];
+
+        users.forEach(u => {
+          if (userCounts[u.id]) {
+            userCounts[u.id]++;
+          } else {
+            userCounts[u.id] = 1;
+            uniqueUsers.push(u);
+          }
+        });
+
+        uniqueUsers.forEach(u => {
+          u.count = userCounts[u.id];
+        });
+
+        res.json(uniqueUsers);
       })
     })
   } else {

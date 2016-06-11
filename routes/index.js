@@ -74,7 +74,7 @@ router.get('/buddies/:user_id', (req, res, next) => {
       .whereIn('batch_id', ids)
       .whereNot('user_id', req.params.user_id)
       .join('users', 'users.id', 'user_id')
-      .select('users.first_name', 'users.last_name', 'users.id')
+      .select('users.first_name', 'users.last_name', 'users.id', 'image_url')
       .then(users => {
         var userCounts = {};
         var uniqueUsers = [];
@@ -229,6 +229,17 @@ router.get('/beers', (req, res, next) => {
     })
   }
 });
+
+router.get('/points/:id', (req, res, next) => {
+  let id = req.params.id
+  getAwards(id).then(function(awards){
+    var points = 0;
+    for(var i=0; i<awards.length; i++) {
+      points += awards[i].points
+    }
+    res.json(points)
+  })
+})
 
 function getAwards (id) {
   return knex('user_awards').where('user_id', id).join('awards', 'awards.id', 'award_id')

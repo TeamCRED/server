@@ -66,6 +66,35 @@ router.get('/batch', (req, res) => {
   })
 });
 
+router.get('/batches/:user_id', (req, res, next) => {
+  if (req.params.user_id) {
+    knex('user_batches')
+    .where('user_id', req.params.user_id)
+    .join('batches', 'batches.id', 'batch_id')
+    .then(function (batches) {
+      res.json(batches);
+    })
+  } else {
+    res.json({error: 'Invalid user id'})
+  }
+});
+
+router.get('/employees/:user_id', (req, res, next) => {
+  if (req.params.user_id) {
+    knex('user_batches')
+    .where('user_batches.user_id', req.params.user_id)
+    .join('batches', 'batches.id', 'user_batches.batch_id')
+    .join('employee_batches', 'employee_batches.batch_id', 'user_batches.batch_id')
+    .join('employees', 'employees.id', 'employee_batches.employee_id')
+    .join('title', 'title.id', 'employees.title_id')
+    .then(function (employees) {
+      res.json(employees);
+    })
+  } else {
+    res.json({error: 'Invalid user id'})
+  }
+});
+
 router.get('/awards', (req, res, next) =>{
   if(req.user && req.user.id){
     getAwards(req.user.id).then(function(awards){

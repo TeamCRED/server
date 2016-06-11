@@ -100,6 +100,42 @@ router.get('/buddies/:user_id', (req, res, next) => {
   }
 });
 
+router.get('/batch/:batch_id/buddies/:user_id', (req, res, next) => {
+  if (req.params.user_id) {
+    knex('user_batches').where('batch_id', req.params.batch_id)
+    .then(batches => {
+      var ids = batches.map(b => b.user_id);
+      console.log(ids)
+      knex('user_batches')
+      .whereIn('user_id', ids)
+    .whereNot('user_id', req.params.user_id)
+    .join('users', 'users.id', 'user_id')
+    .select('users.first_name', 'users.last_name', 'users.id')
+    .then(users => {
+      var userCounts = {};
+      var uniqueUsers = [];
+
+      users.forEach(u => {
+        if (userCounts[u.id]) {
+          userCounts[u.id]++;
+        } else {
+          userCounts[u.id] = 1;
+          uniqueUsers.push(u);
+        }
+      });
+
+      uniqueUsers.forEach(u => {
+        u.count = userCounts[u.id];
+      });
+
+      res.json(uniqueUsers);
+    })
+  })
+  } else {
+    res.json({error: 'Invalid user id'})
+  }
+});
+
 router.get('/employees/:user_id', (req, res, next) => {
   if (req.params.user_id) {
     knex('user_batches')
@@ -179,6 +215,17 @@ router.get('/beers', (req, res, next) => {
     })
   }
 });
+
+router.get('/points/:id', (req, res, next) => {
+  let id = req.params.id
+  getAwards(id).then(function(awards){
+    var points = 0;
+    for(var i=0; i<awards.length; i++) {
+      points += awards[i].points
+    }
+    res.json(points)
+  })
+})
 
 function getAwards (id) {
   return knex('user_awards').where('user_id', id).join('awards', 'awards.id', 'award_id')

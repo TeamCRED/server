@@ -10,6 +10,9 @@ function Batches() {
   return knex('batches')
 }
 
+let beers = null;
+let beersByID = {};
+
 router.get('/', (req, res) => {
   res.send('please enter a beer')
 });
@@ -79,20 +82,30 @@ router.get('/awards/:id', (req, res, next) => {
 
 router.get('/beer/:id', (req, res, next) => {
   let id = req.params.id;
-  let url = 'http://apis.mondorobot.com/beers/'
-  unirest.get(url + id)
+  if(beersByID.hasOwnProperty(id)) {
+    res.json(beersByID[id]);
+  } else {
+    let url = 'http://apis.mondorobot.com/beers/'
+    unirest.get(url + id)
     .end(response => {
-      let beerData = response.body.beer
+      let beerData = response.body.beer;
+      beersByID[id] = beerData;
       res.json(beerData);
     })
+  }
 });
 
 router.get('/beers', (req, res, next) => {
-  let url = 'http://apis.mondorobot.com/beers/'
-  unirest.get(url)
+  if(beers) {
+    res.json(beers);
+  } else {
+    let url = 'http://apis.mondorobot.com/beers/'
+    unirest.get(url)
     .end(response => {
+      beers = response.body.beers;
       res.json(response.body.beers);
     })
+  }
 });
 
 function getAwards (id) {

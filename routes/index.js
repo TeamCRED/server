@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
   res.send('please enter a beer')
 });
 
-router.get('/beer', (req, res) => {
+router.get('/batch', (req, res) => {
   let quote = req.query.quote || '';
   let tank = req.query.tank || '';
   let time = req.query.time || '';
@@ -77,10 +77,10 @@ router.get('/awards/:id', (req, res, next) => {
   })
 })
 
-router.get('/:beer', (req, res, next) => {
-  let beer = req.params.beer;
+router.get('/beer/:id', (req, res, next) => {
+  let id = req.params.id;
   let url = 'http://apis.mondorobot.com/beers/'
-  unirest.get(url + beer)
+  unirest.get(url + id)
     .end(response => {
       let beerData = response.body.beer
       res.json(beerData);

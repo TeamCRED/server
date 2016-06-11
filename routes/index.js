@@ -101,6 +101,25 @@ router.get('/batches/:user_id', (req, res, next) => {
   }
 });
 
+router.get('/buddies/:user_id', (req, res, next) => {
+  if (req.params.user_id) {
+    knex('user_batches').where('user_id', req.params.user_id)
+    .then(batches => {
+      var ids = batches.map(b => b.batch_id);
+      knex('user_batches')
+      .whereIn('batch_id', ids)
+      .whereNot('user_id', req.params.user_id)
+      .join('users', 'users.id', 'user_id')
+      .select('users.first_name', 'users.last_name', 'users.id')
+      .then(users => {
+        res.json(users);
+      })
+    })
+  } else {
+    res.json({error: 'Invalid user id'})
+  }
+});
+
 router.get('/employees/:user_id', (req, res, next) => {
   if (req.params.user_id) {
     knex('user_batches')

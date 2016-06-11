@@ -74,7 +74,7 @@ router.get('/buddies/:user_id', (req, res, next) => {
       .whereIn('batch_id', ids)
       .whereNot('user_id', req.params.user_id)
       .join('users', 'users.id', 'user_id')
-      .select('users.first_name', 'users.last_name', 'users.id')
+      .select('users.first_name', 'users.last_name', 'users.id', 'image_url')
       .then(users => {
         var userCounts = {};
         var uniqueUsers = [];

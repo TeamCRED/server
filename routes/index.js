@@ -70,13 +70,19 @@ router.get('/awards', (req, res, next) =>{
   if(req.user && req.user.id){
     getAwards(req.user.id).then(function(awards){
       res.json(awards)
+    }).catch(err => {
+      res.json({error: err})
     })
+  } else {
+    res.json({error: "You are not logged in"});
   }
 })
 
 router.get('/awards/:id', (req, res, next) => {
   getAwards(req.params.id).then(function(awards){
     res.json(awards)
+  }).catch(err => {
+    res.json({error: err});
   })
 })
 

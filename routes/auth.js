@@ -56,6 +56,7 @@ function findUserByID(id) {
 }
 
 function findUserByEmail(email) {
+  if (!email || !validator.isEmail(email)) return Promise.reject('Invalid email');
   return Users().where('email', email).first()
     .then(function(user) {
       if (user) {

@@ -48,6 +48,8 @@ router.post('/user_batch', (req, res, next) => {
                     error: 'That batch has already been added!'
                   })
                 } else {
+                  console.log('user', req.user.id);
+                  console.log('batch', batch.id);
                   knex('user_batches').insert({
                     user_id: req.user.id,
                     batch_id: batch.id
